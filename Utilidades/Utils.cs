@@ -59,9 +59,12 @@ namespace MilitarLogisticsAPI.Utilidades
 
             if (units_fibonacci == null)
             {
-                throw new Exception("No se encontraron reglas para para el tipo_parametro \"Unidades\"");
+                throw new Exception(ExcepcionMessage.Units_Fibonacci_Invalid);
             }
 
+            if (!isNumber(request.Units.ToString())) {
+                throw new Exception(ExcepcionMessage.Units_Invalid);
+            }
             if (units_fibonacci.FirstOrDefault(u => u.Parametro == request.Units.ToString()) == null)
             {
                 _response.Supply_response = CalcularRange(request.Units);
@@ -69,6 +72,9 @@ namespace MilitarLogisticsAPI.Utilidades
             else if (units_fibonacci.FirstOrDefault(u => u.Parametro == request.Units.ToString()) != null)
             {
                 _response.Supply_response = int.Parse(units_fibonacci.FirstOrDefault(u => u.Parametro == request.Units.ToString()).Valor);
+            }
+            else {
+                throw new Exception(ExcepcionMessage.Units_NotExists);
             }
         }
 
@@ -158,8 +164,26 @@ namespace MilitarLogisticsAPI.Utilidades
                 double hourMax = (double)hoursTotal.Max();
                 _response.Date_response = request.Date.AddHours(hourMax);
                 _response.Hour_response = _response.Date_response.ToString("HH:mm");
+                string timeEstimate = _response.Time_response.Replace(";", " y ");
+                _response.Time_response = String.Format(Constants.Time_Estimate, timeEstimate, Constants.Hours);
             }
         }
+
+        public static bool isNumber(string valor)
+        {
+            if (int.TryParse(valor, out int number))
+            {
+                if (number <0) {
+                    return false;
+                }
+                return true; 
+            }
+            else
+            {
+                return false; 
+            }
+        }
+
     }
 
 }

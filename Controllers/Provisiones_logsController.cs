@@ -51,11 +51,10 @@ namespace MilitarLogisticsAPI.Controllers
                 Utils.CalculteAmountProvisions(_parametros, request,ref _response);            
                 Utils.CalculatePartOfDay(request.Hour, out time_zone);
                 Utils.CalculteTimeEstimate(_parametros, request, time_zone, ref _response);
-                Utils.CalculateDeliveryDate(request, ref _response);
 
                 bool resultadoInsert = await new ManejadorProvisiones_logs(_db).insert(_response, request,Constants.Type_Success);
 
-                return Ok();
+                return Ok(_response);
             }
             catch (Exception ex)
             {
